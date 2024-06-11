@@ -1,0 +1,27 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy files
+      run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        mkdir -p public/src/main/resources/static
+        cp -R src/main/resources/static/* public/src/main/resources/static/
+        cd public
+        git init
+        git remote add origin https://github.com/${{ github.repository }}.git
+        git add .
+        git commit -m 'Deploy to GitHub Pages'
+        git push --force --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" master:gh-pages
